@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <title>reflow</title>
   <meta name="author" content="forresto">
-  <meta name="description" content="reflowing image data" />
+  <meta name="description" content="glitches by reflowing image data" />
   
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
   <script src="http://meemoo.org/meemoo/meemoo.js"></script>
@@ -42,7 +42,13 @@
             cImageData.data[i+3] = imageData.data[i+3]; // A
           }
           cContext.putImageData(cImageData,0,0);
+          Meemoo.send("image", cImageData);
         },
+        port: true,
+        type: "image"
+      }
+    }).addOutputs({
+      image: {
         port: true,
         type: "image"
       }

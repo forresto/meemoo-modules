@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>img2canvas</title>
+  <meta name="author" content="forresto">
+  <meta name="description" content="image data url to canvas image data" />
+  
+  <script src="http://meemoo.org/meemoo/meemoo.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin:0;
+      padding:0;
+    }
+  </style>
+</head>
+<body>
+  
+  <canvas id="imageCanvas"></canvas>
+    
+  <script type="text/javascript">
+  
+    var c = document.getElementById("imageCanvas");
+    var cContext = c.getContext("2d");
+  
+    Meemoo.addInputs({
+      dataurl: {
+        action: function (dataurl) {
+          var img = new Image();
+          img.onload = function() {
+            var w = img.width;
+            var h = img.height;
+            c.width = w;
+            c.height = h;
+            cContext.drawImage(img, 0, 0);
+            Meemoo.send("image", cContext.getImageData( 0, 0, w, h ));
+          }
+          img.src = dataurl;
+        },
+        port: true,
+        type: "data:image"
+      }
+    }).addOutputs({
+      image: {
+        port: true,
+        type: "image"
+      }
+    });
+    
+  </script>
+  
+</body>
+</html>
