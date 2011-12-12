@@ -31,8 +31,8 @@
     var img = document.getElementById("img");
 
     var name = "meemoo";
-    var title = "meemoo image share";
-    var caption = "This image was created with a Meemoo composition. http://meemoo.org/iframework/#/example/cam2gif";
+    var title = "meemoo image share ";
+    var caption = "This image was created with a Meemoo composition. http://meemoo.org/ ";
     
     $("#upload")
       .attr('disabled','disabled')
@@ -85,6 +85,20 @@
         },
         port: true,
         type: "data:image"
+      },
+      title: {
+        action: function (_title) {
+          title = _title;
+        },
+        port: true,
+        type: "string"
+      },
+      caption {
+        action: function (_caption) {
+          caption = _caption;
+        },
+        port: true,
+        type: "string"
       }
     }).addOutputs({
       url: {
