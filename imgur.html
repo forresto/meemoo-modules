@@ -34,13 +34,15 @@
     var title = "meemoo image share";
     var caption = "This image was created with a Meemoo composition. http://meemoo.org/";
     
-    $("#upload").click( function(){
-      share(img.src.split(',')[1]);
-      $("#upload").attr('disabled','disabled');
-    })
+    $("#upload")
+      .attr('disabled','disabled')
+      .click( function(){
+        share(img.src.split(',')[1]);
+        $("#upload").attr('disabled','disabled');
+      });
     
     // Thanks http://29a.ch/2011/9/11/uploading-from-html5-canvas-to-imgur-data-uri
-    function share(b64){
+    function share(base64){
       $("#status").prepend("Uploading... <br />");
       // upload to imgur using jquery/CORS
       // https://developer.mozilla.org/En/HTTP_access_control
@@ -54,7 +56,7 @@
           name: name,
           title: title,
           caption: caption,
-          image: b64
+          image: base64
         },
         dataType: 'json'
       }).success( function(data) {
