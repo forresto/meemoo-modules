@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>imgur</title>
+  <meta name="author" content="forresto" />
+  <meta name="description" content="image data url to Imgur image sharing service" />
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="http://meemoo.org/meemoo/meemoo.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin:0;
+      padding:0;
+    }
+    #status {
+      font-family: verdana;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  
+  <img id="img" /><br />
+  <button id="upload">Upload to Imgur</button>
+  <div id="status"></div>
+    
+  <script type="text/javascript">
+  
+    var img = document.getElementById("img");
+
+    var name = "meemoo";
+    var title = "meemoo image share";
+    var caption = "This image was created with a Meemoo composition. http://meemoo.org/";
+    
+    $("#upload").click( function(){
+      share(img.src.split(',')[1]);
+      $("#upload").attr('disabled','disabled');
+    })
+    
+    // Thanks http://29a.ch/2011/9/11/uploading-from-html5-canvas-to-imgur-data-uri
+    function share(b64){
+      $("#status").prepend("Uploading... <br />");
+      // upload to imgur using jquery/CORS
+      // https://developer.mozilla.org/En/HTTP_access_control
+      $.ajax({
+        url: 'http://api.imgur.com/2/upload.json',
+        type: 'POST',
+        data: {
+          type: 'base64',
+          // get your key here, quick and fast http://imgur.com/register/api_anon
+          key: 'f70b8b3c3042abc204450bbd0e555174',
+          name: name,
+          title: title,
+          caption: caption,
+          image: b64
+        },
+        dataType: 'json'
+      }).success( function(data) {
+        console.log(data);
+        // Show link
+        var page = data['upload']['links']['imgur_page']
+        var original = data['upload']['links']['original']
+        var del = data['upload']['links']['delete_page']
+        $("#status").prepend('Done! <a href="'+page+'" target="_blank">page</a> <a href="'+original+'" target="_blank">direct</a> <a href="'+del+'" target="_blank">delete</a><br />');
+        
+        // Send link
+        Meemoo.send("url", original);
+      }).error( function(e) {
+        $("#status").prepend('Upload failed. Save-as or drag image to your desktop instead. <br />');
+        $("#upload").removeAttr('disabled');
+      });
+    }
+    
+    Meemoo.addInputs({
+      dataurl: {
+        action: function (dataurl) {
+          img.src = dataurl;
+          img.onload = function () {
+            $("#upload").removeAttr('disabled');
+          };
+        },
+        port: true,
+        type: "data:image"
+      }
+    }).addOutputs({
+      url: {
+        port: true,
+        type: "string"
+      }
+    });
+    
+  </script>
+  
+</body>
+</html>
