@@ -20,6 +20,7 @@
 </head>
 <body>
   
+  <button id="send" onclick="Meemoo.inputs.send();">send image</button>
   <canvas id="processingCanvas"></canvas>
     
   <script type="text/javascript">
@@ -28,11 +29,17 @@
     var p;
     
     Meemoo.addInputs({
+      send: {
+        action: function () {
+          var c = document.getElementById("processingCanvas");
+          Meemoo.send("image", c.getContext("2d").getImageData(0,0,c.width,c.height));
+        },
+        port: true,
+        type: "bang"
+      },
       pressed: {
         action: function () {
           Processing.getInstanceById("processingCanvas").mousePressed();
-          var c = document.getElementById("processingCanvas");
-          Meemoo.send("image", c.getContext("2d").getImageData(0,0,c.width,c.height));
         },
         port: true,
         type: "bang"
