@@ -62,10 +62,13 @@
             .click(function(e){ 
               Meemoo.send("image", e.target.getContext("2d").getImageData(0,0,e.target.width,e.target.height) );
             });
-          c = c[0];
-          c.getContext("2d").putImageData(imageData,0,0);
+          c[0].getContext("2d").putImageData(imageData,0,0);
           $("body").append(c);
+          
+          window.scroll(0, c.offset().top);
+          
           count++;
+          viewing = count;
         },
         port: true,
         type: "image"
