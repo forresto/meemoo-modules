@@ -27,12 +27,21 @@
     
     var processingCode;
     var p;
+
+    var c = document.getElementById("processingCanvas");
+    var cContext = c.getContext("2d");
     
     Meemoo.addInputs({
+      image: {
+        action: function (imageData) {
+          cContext.putImageData(imageData,0,0);          
+        },
+        port: true,
+        type: "image"
+      },
       send: {
         action: function () {
-          var c = document.getElementById("processingCanvas");
-          Meemoo.send("image", c.getContext("2d").getImageData(0,0,c.width,c.height));
+          Meemoo.send("image", cContext.getImageData(0,0,c.width,c.height));
         },
         port: true,
         type: "bang"
@@ -49,7 +58,7 @@
           if (data.processingcode) {
             processingCode = data.processingcode;
             p = null;
-            p = new Processing(document.getElementById("processingCanvas"), processingCode);
+            p = new Processing(c, processingCode);
           }
         }
       }

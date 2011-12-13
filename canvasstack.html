@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>canvas stack</title>
+  <meta name="author" content="forresto">
+  <meta name="description" content="hold a stack of canvases for reuse" />
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  
+  <script src="http://meemoo.org/meemoo/meemoo.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin:0;
+      padding:0;
+      font-family: verdana;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  
+  <script type="text/javascript">
+    
+    var count = 0;
+    var viewing = 0;
+    
+    Meemoo.addInputs({
+      image: {
+        action: function (imageData) {
+          count++;
+          
+          var c = $('<canvas width="'+imageData.width+'" height="'+imageData.height+'" />');
+          c = c[0];
+          
+          c.getContext("2d").putImageData(imageData,0,0);
+          
+          var div = $('<div id="c'+count+'" name="c'+count+'" />')
+            .data("c", c)
+            .append(c)
+            .append(
+              $('<a>send</a> ')
+                .click(function(e){ 
+                  Meemoo.send("image", $(e.target).parent().data("c").getContext("2d").getImageData(0,0,c.width,c.height) );
+                })
+            );
+          
+          var sendone = 
+            
+          div.append(sendone);
+          $("body").append(div);
+        },
+        port: true,
+        type: "image"
+      }
+      
+    }).addOutputs({
+      image: {
+        port: true,
+        type: "image"
+      }
+    });
+    
+  </script>
+  
+</body>
+</html>
