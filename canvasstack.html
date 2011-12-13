@@ -12,10 +12,13 @@
   
   <style type="text/css">
     html, body {
-      margin:0;
+      margin:0 0 100px 0;
       padding:0;
       font-family: verdana;
       font-size: 10px;
+    }
+    canvas {
+      cursor: pointer;
     }
   </style>
 </head>
@@ -26,30 +29,43 @@
     var count = 0;
     var viewing = 0;
     
+    $(document).mouseover(function(e){
+      $("body").focus();
+    });
+    
+    $(document).keydown(function(e){
+      // Left
+      if ((e.keyCode === 37 || e.keyCode === 38) && viewing > 0) { 
+        e.preventDefault();
+        viewing--;
+        window.scroll(0, $("#c"+viewing).offset().top);
+        return false;
+      }
+      else if ((e.keyCode === 39 || e.keyCode === 40) && viewing < count-1) { 
+        e.preventDefault();
+        viewing++;
+        window.scroll(0, $("#c"+viewing).offset().top);
+        return false;
+      }
+    });
+    
     Meemoo.addInputs({
       image: {
         action: function (imageData) {
-          count++;
-          
-          var c = $('<canvas width="'+imageData.width+'" height="'+imageData.height+'" />');
+          var c = $('<canvas />')
+            .attr({
+              id: 'c'+count,
+              width: imageData.width,
+              height: imageData.height,
+              title: "image "+(count+1)+": click to send, arrow keys to scroll"
+            })
+            .click(function(e){ 
+              Meemoo.send("image", e.target.getContext("2d").getImageData(0,0,e.target.width,e.target.height) );
+            });
           c = c[0];
-          
           c.getContext("2d").putImageData(imageData,0,0);
-          
-          var div = $('<div id="c'+count+'" name="c'+count+'" />')
-            .data("c", c)
-            .append(c)
-            .append(
-              $(' <button>send</button> ')
-                .click(function(e){ 
-                  Meemoo.send("image", $(e.target).parent().data("c").getContext("2d").getImageData(0,0,c.width,c.height) );
-                })
-            );
-          
-          var sendone = 
-            
-          div.append(sendone);
-          $("body").append(div);
+          $("body").append(c);
+          count++;
         },
         port: true,
         type: "image"
