@@ -40,7 +40,7 @@
             .data("c", c)
             .append(c)
             .append(
-              $('<a>send</a> ')
+              $(' <button>send</button> ')
                 .click(function(e){ 
                   Meemoo.send("image", $(e.target).parent().data("c").getContext("2d").getImageData(0,0,c.width,c.height) );
                 })
