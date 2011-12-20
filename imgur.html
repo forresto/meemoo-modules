@@ -60,13 +60,19 @@
       }).success( function(data) {
         console.log(data);
         // Show link
-        var page = data['upload']['links']['imgur_page']
-        var original = data['upload']['links']['original']
-        var del = data['upload']['links']['delete_page']
-        $("#status").prepend('Done! <a href="'+page+'" target="_blank">page</a> <a href="'+original+'" target="_blank">direct</a> <a href="'+del+'" target="_blank">delete</a><br />');
+        var page = data['upload']['links']['imgur_page'];
+        var image = data['upload']['links']['original'];
+        var del = data['upload']['links']['delete_page'];
+        var show = '<a href="'+image+'" target="_blank"><img src="'+image+'" style="max-width:50px;max-height:50px;"></a> ';
+        show += '<a href="'+page+'" target="_blank">page</a> <a href="'+image+'" target="_blank">image</a> <a href="'+del+'" target="_blank">delete</a><br />'
+        $("#status").prepend(show);
         
-        // Send link
-        Meemoo.send("url", original);
+        // Send links
+        Meemoo.send("pageurl", page);
+        Meemoo.send("imageurl", image);
+        
+        // Google analytics
+        _gaq.push(['_trackEvent', 'imgur', 'saved', page]);
       }).error( function(e) {
         $("#status").prepend('Upload failed. Save-as or drag image to your desktop instead. <br />');
         $("#upload").removeAttr('disabled');
@@ -99,12 +105,28 @@
         type: "string"
       }
     }).addOutputs({
-      url: {
+      pageurl: {
+        port: true,
+        type: "string"
+      },
+      imageurl: {
         port: true,
         type: "string"
       }
     });
     
+  </script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-274009-19']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
   </script>
   
 </body>
