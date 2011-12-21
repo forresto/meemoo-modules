@@ -63,7 +63,7 @@
         var page = data['upload']['links']['imgur_page'];
         var image = data['upload']['links']['original'];
         var del = data['upload']['links']['delete_page'];
-        var show = '<a href="'+image+'" target="_blank"><img src="'+image+'" style="max-width:50px;max-height:50px;"></a> ';
+        var show = 'Done! <a href="'+image+'" target="_blank"><img src="'+image+'" style="max-width:50px;max-height:50px;"></a> ';
         show += '<a href="'+page+'" target="_blank">page</a> <a href="'+image+'" target="_blank">image</a> <a href="'+del+'" target="_blank">delete</a><br />'
         $("#status").prepend(show);
         
