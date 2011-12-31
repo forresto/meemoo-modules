@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <title>canvas stack</title>
   <meta name="author" content="forresto">
-  <meta name="description" content="hold a stack of canvases for reuse" />
+  <meta name="description" content="hold a stack of canvases for reuse, click sends it, arrows navigate to prev/next" />
   
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   
@@ -26,6 +26,7 @@
   
   <script type="text/javascript">
     
+    var canvasarray = [];
     var count = 0;
     var viewing = 0;
     
@@ -65,8 +66,9 @@
           c[0].getContext("2d").putImageData(imageData,0,0);
           $("body").append(c);
           
-          window.scroll(0, c.offset().top);
+          canvasarray.push(c);
           
+          window.scroll(0, c.offset().top);
           viewing = count;
           count++;
         },
