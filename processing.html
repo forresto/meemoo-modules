@@ -36,35 +36,30 @@
         action: function (imageData) {
           cContext.putImageData(imageData,0,0);          
         },
-        port: true,
         type: "image"
       },
       send: {
         action: function () {
           Meemoo.send("image", cContext.getImageData(0,0,c.width,c.height));
         },
-        port: true,
         type: "bang"
       },
       pressed: {
         action: function () {
           Processing.getInstanceById("processingCanvas").mousePressed();
         },
-        port: true,
         type: "bang"
       },
-      setState: {
-        action: function (data) {
-          if (data.processingcode) {
-            processingCode = data.processingcode;
-            p = null;
-            p = new Processing(c, processingCode);
-          }
-        }
+      code: {
+        action: function (code) {
+          processingCode = code;
+          p = null;
+          p = new Processing(c, processingCode);
+        },
+        type: "code:java"
       }
     }).addOutputs({
       image: { 
-        port: true,
         type: "image"
       }
     });

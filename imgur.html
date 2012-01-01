@@ -87,30 +87,25 @@
             $("#upload").removeAttr('disabled');
           };
         },
-        port: true,
         type: "data:image"
       },
       title: {
         action: function (_title) {
           title = _title;
         },
-        port: true,
         type: "string"
       },
       caption: {
         action: function (_caption) {
           caption = _caption;
         },
-        port: true,
         type: "string"
       }
     }).addOutputs({
       pageurl: {
-        port: true,
         type: "string"
       },
       imageurl: {
-        port: true,
         type: "string"
       }
     });

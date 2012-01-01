@@ -28,14 +28,12 @@
             count++;
             $("#log").prepend(count + ": " + (e.data.constructor === String ? e.data : JSON.stringify(e.data)) + "<br />");
           },
-          port: true,
         },
         clear: {
           action: function () {
             $("#log").empty();
             count = 0;
           },
-          port: true,
           type: "bang"
         }
       });

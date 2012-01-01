@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>canvas stack</title>
+  <title>canvas array</title>
   <meta name="author" content="forresto">
   <meta name="description" content="hold a stack of canvases for reuse, click sends it, arrows navigate to prev/next" />
   
@@ -72,13 +72,11 @@
           viewing = count;
           count++;
         },
-        port: true,
         type: "image"
       }
       
     }).addOutputs({
       image: {
-        port: true,
         type: "image"
       }
     });

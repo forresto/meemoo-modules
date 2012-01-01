@@ -44,12 +44,10 @@
           cContext.putImageData(cImageData,0,0);
           Meemoo.send("image", cImageData);
         },
-        port: true,
         type: "image"
       }
     }).addOutputs({
       image: {
-        port: true,
         type: "image"
       }
     });
