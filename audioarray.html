@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>audioarray</title>
+  <meta name="author" content="forresto">
+  <meta name="description" content="hold a stack of audio for reuse" />
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  
+  <script src="http://meemoo.org/meemoo/meemoo.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin:0;
+      padding:0;
+      font-family: verdana;
+      font-size: 10px;
+    }
+    audio {
+      width: 95%;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="players"></div>
+  
+  <script type="text/javascript">
+    
+    var count = 0;
+    
+    Meemoo.setInfo({
+      title: "audioarray",
+      author: "forresto",
+      description: "text to speech with speak.js"
+    }).addInputs({
+      audio: {
+        action: function (audio) {
+          var a = $("<audio />").attr({
+            id: "audio_"+count,
+            src: audio, 
+            controls: "controls"
+          });
+          var b = $("<button>send "+count+"</button>").data({
+            "audioid": count
+          }).click(function(e){
+            Meemoo.inputs.send($(this).data("audioid"));
+          });
+          $("#players").append(a,b);
+          count++;
+        },
+        type: "data:audio"
+      },
+      title: {
+        action: function (title) {
+          $("#players").append(
+            $("<div>"+title+"</div>")
+          );
+        },
+        type: "data:audio"
+      },
+      send: {
+        action: function (id) {
+          var player = $( "#audio_"+id );
+          if (!player) {
+            player = $( "#audio_"+(count-1) );
+          }
+          if (player) {
+            Meemoo.send( "audio", $( "#audio_"+id ).attr("src") );
+          }
+        }
+      }
+    }).addOutputs({
+      audio: {
+        type: "data:audio"
+      }
+    });
+    
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>speech2text</title>
+  <meta name="author" content="forresto" />
+  <meta name="description" content="speech to text with x-webkit-speech" />
+  
+  <script src="http://meemoo.org/meemoo/meemoo.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin:0;
+      padding:0;
+      font-family: Verdana;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  
+  <form onsubmit="Meemoo.inputs.send(); return false;">
+    <input id="speechinput" style="width:95%;" x-webkit-speech />
+    <input type="submit" value="send">
+  </form>
+  
+  <div>
+    In Chrome there is a microphone icon that will record you and send the audio to Google for fast speech-to-text conversion. 
+  </div>
+    
+  <script type="text/javascript">
+    
+    var text = "";
+    var speechinput = document.getElementById('speechinput');
+    speechinput.onwebkitspeechchange = function(e) {
+      Meemoo.inputs.send();
+    };
+
+  
+    Meemoo.setInfo({
+      title: "speech2text",
+      author: "forresto",
+      description: "speech to text with x-webkit-speech"
+    }).addInputs({
+      send: {
+        action: function () {
+          text = speechinput.value;
+          Meemoo.send("text", text);
+        },
+        type: "bang"
+      }
+    }).addOutputs({
+      text: {
+        type: "string"
+      }
+    });
+    
+  </script>
+  
+</body>
+</html>
