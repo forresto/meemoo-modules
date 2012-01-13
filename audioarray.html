@@ -11,14 +11,26 @@
   <script src="http://meemoo.org/meemoo/meemoo.js"></script>
   
   <style type="text/css">
-    html, body {
-      margin:0;
-      padding:0;
+    html {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      margin: 0;
+      padding: 5px 0 0 5px;
       font-family: verdana;
       font-size: 10px;
     }
     audio {
-      width: 95%;
+      margin: 0 0 10px 0;
+      padding: 0;
+    }
+    h2 {
+      margin: 0;
+      padding: 0;
+      font-family: verdana;
+      font-size: 12px;
+      font-weight: 100;
     }
   </style>
 </head>
@@ -50,7 +62,7 @@
       title: {
         action: function (title) {
           $("#players").append(
-            $("<div>"+title+"</div>")
+            $("<h2>"+title+"</h2>")
           );
         },
         type: "data:audio"
