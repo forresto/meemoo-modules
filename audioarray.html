@@ -42,12 +42,7 @@
             src: audio, 
             controls: "controls"
           });
-          var b = $("<button>send "+count+"</button>").data({
-            "audioid": count
-          }).click(function(e){
-            Meemoo.inputs.send($(this).data("audioid"));
-          });
-          $("#players").append(a,b);
+          $("#players").append(a);
           count++;
         },
         type: "data:audio"
