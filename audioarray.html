@@ -29,7 +29,7 @@
       margin: 0;
       padding: 0;
       font-family: verdana;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 100;
     }
   </style>
@@ -62,7 +62,8 @@
       title: {
         action: function (title) {
           $("#players").append(
-            $("<h2>"+title+"</h2>")
+            $("<h2 />")
+              .text(title)
           );
         },
         type: "string"
@@ -76,7 +77,8 @@
           if (player) {
             Meemoo.send( "audio", $( "#audio_"+id ).attr("src") );
           }
-        }
+        },
+        type: "int"
       }
     }).addOutputs({
       audio: {
