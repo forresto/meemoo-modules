@@ -79,6 +79,22 @@
           }
         },
         type: "int"
+      },
+      play: {
+        action: function (id) {
+          var player = $( "#audio_"+id );
+          player[0].play()
+        },
+        type: "int",
+        description: "play the id specified"
+      },
+      playall: {
+        action: function () {
+          $("audio").each(function(i){
+            this.play()
+          })
+        },
+        type: "bang"
       }
     }).addOutputs({
       audio: {
