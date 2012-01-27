@@ -45,18 +45,24 @@
     var bpm, ms, beat;
     var loopInterval;
     var currentBeat = true;
+
+    var running = false;
     
     function setBpm(message){
       bpm = parseFloat(message, 10);
       ms = parseInt((1000 / bpm * 60), 10);
-      setLoop(ms);
+      if (running) {
+        setLoop(ms);
+      }
       setInfo();
     }
     
     function setMs(message){
       ms = parseInt(message, 10);
       bpm = parseInt((1000 / ms * 60), 10);
-      setLoop(ms);
+      if (running) {
+        setLoop(ms);
+      }
       setInfo();
     }
 
@@ -79,12 +85,14 @@
       },
       start: {
         action: function (m) {
+          running = true;
           setLoop(ms);
         },
         type: "bang"
       },
       stop: {
         action: function (m) {
+          running = false;
           clearInterval(loopInterval);
         },
         type: "bang"
