@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>metronome</title>
+  <meta name="author" content="sembiki.com">
+  <meta name="description" content="meemoo.js module for rhythm in bpm or ms" />
+  
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  <script type="text/javascript" src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+
+  <style type="text/css">
+    html, body {
+      font-family: Verdana;
+      font-size: 10px;
+      overflow: hidden;
+    }
+    #tap {
+      max-width: 100%;
+      max-height: 100%;
+      width: 100px;
+      height: 100px;
+      border-radius: 25px;
+      border-width: 1px;
+    }
+  </style>
+
+</head>
+<body>
+  
+  <button type="button" id="tap">tap</button>
+
+  <script type="text/javascript">
+  
+  $(document).ready(function() {
+    
+    var ms, bpm, last;
+    var diffs = [];
+    var resetTimer;
+    var sendTimer;
+
+    var howManyToAverage = 4;
+
+    $("#tap").click(tap);
+
+    function tap () {
+      var now = (new Date).getTime();
+      if (last) {
+        // Only start saving times on second tap
+        diffs.push(now-last);
+        if (diffs.length >= howManyToAverage) {
+
+          var sum = 0;
+          for (var i = 0; i < howManyToAverage; i++){
+            sum += diffs[i];
+          }
+          ms = Math.round(sum/howManyToAverage);
+          bpm = Math.round(60*1000/ms);
+
+          $("#tap").text(bpm+"bpm "+ms+"ms");
+
+          // Wait 1.5s before sending
+          window.clearTimeout(sendTimer);
+          sendTimer = window.setTimeout(function(){
+            Meemoo.send("ms", ms);
+            console.log(ms);
+          }, 1500);
+          
+          // Knock off oldest
+          diffs.shift();
+        }
+      }
+      // Wait 1.5s and reset
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(function(){
+        last = null;
+        diffs = [];
+      }, 1500);
+
+      last = now;
+    }
+    
+    Meemoo
+      .setInfo({
+        title: "taptempo",
+        author: "forresto",
+        description: "tap out your rhythm, averages last 4 taps"
+      })
+      .addInputs({
+        tap: {
+          action: tap,
+          type: "bang"
+        }
+      })
+      .addOutputs({
+        ms: { 
+          type: "int"
+        }
+      });
+        
+  });
+  
+  </script>
+  
+</body>
+</html>
