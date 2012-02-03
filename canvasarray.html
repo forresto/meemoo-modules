@@ -90,6 +90,8 @@
 
     window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
+    // window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelRequestAnimationFrame || window.msCancelAnimationFrame;
+
     function step(timestamp) {
       var progress = timestamp - start;
       if (progress >= delay) {
@@ -129,20 +131,26 @@
     };
     function pause(){
       playing = false;
-      window.cancelAnimationFrame();
+      // window.cancelAnimationFrame();
     };
     function prev(){
-      
-    };
-    function next(){
+      currentFrame--;
+      if (currentFrame < 0) {
+        currentFrame = count-1;
+      }
+      console.log(currentFrame);
       var showCanvas = $("#canvasarray canvas")[currentFrame];
       var image = showCanvas.getContext("2d").getImageData( 0, 0, $(showCanvas).width(), $(showCanvas).height() );
       $("#animate")[0].getContext("2d").putImageData(image,0,0);
-
+    };
+    function next(){
       currentFrame++;
       if (currentFrame >= count) {
         currentFrame = 0;
       }
+      var showCanvas = $("#canvasarray canvas")[currentFrame];
+      var image = showCanvas.getContext("2d").getImageData( 0, 0, $(showCanvas).width(), $(showCanvas).height() );
+      $("#animate")[0].getContext("2d").putImageData(image,0,0);
     };
 
     function addImage(image) {
