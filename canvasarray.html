@@ -6,9 +6,12 @@
   <meta name="author" content="forresto">
   <meta name="description" content="hold a stack of canvases for reuse, click sends it, arrows navigate to prev/next" />
   
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
   
   <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
   
   <style type="text/css">
     html, body {
@@ -18,17 +21,47 @@
       font-size: 10px;
     }
     canvas {
-      cursor: pointer;
+      padding: 0 5px;
+    }
+    ul {
+      margin: 0px;
+      padding: 0px;
+    }
+    li {
+      border: 1px dotted #AAA;
+      margin: 0 5px;
+      padding: 5px;
+      list-style: none;
+    }
+    li span, li button, li canvas {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .ui-icon-arrowthick-2-n-s {
+      cursor: move;
     }
   </style>
 </head>
 <body>
   
+  <canvas id="animate"></canvas><br />
+  <button id="play">play</button>
+  <button id="pause">pause</button>
+  <button id="prev">prev</button>
+  <button id="next">next</button>
+  <span id="info"></span>
+
+  <ul id="canvasarray"></ul>
+  
   <script type="text/javascript">
+  $(function(){
     
-    var canvasarray = [];
     var count = 0;
     var viewing = 0;
+    var delay = 200;
+    var currentFrame = 0;
+    var start = Date.now();
+    var playing = false;
     
     $(document).mouseover(function(e){
       $("body").focus();
@@ -49,38 +82,166 @@
         return false;
       }
     });
-    
-    Meemoo.addInputs({
-      image: {
-        action: function (imageData) {
-          var c = $('<canvas />')
-            .attr({
-              id: 'c'+count,
-              width: imageData.width,
-              height: imageData.height,
-              title: "image "+(count+1)+": click to send, arrow keys to scroll"
-            })
-            .click(function(e){ 
-              Meemoo.send("image", e.target.getContext("2d").getImageData(0,0,e.target.width,e.target.height) );
-            });
-          c[0].getContext("2d").putImageData(imageData,0,0);
-          $("body").append(c);
-          
-          canvasarray.push(c);
-          
-          window.scroll(0, c.offset().top);
-          viewing = count;
-          count++;
-        },
-        type: "image"
-      }
-      
-    }).addOutputs({
-      image: {
-        type: "image"
-      }
+
+    $("#canvasarray").sortable({
+      placeholder: "ui-state-highlight"
     });
+
+
+    window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+    function step(timestamp) {
+      var progress = timestamp - start;
+      if (progress >= delay) {
+        start = Date.now();
+        next();
+      }
+      if (playing) {
+        window.requestAnimationFrame(step);
+      }
+    }  
+
+    $("#play")
+      .button({
+        icons: {primary: 'ui-icon-play' }
+      })
+      .click(play);
+    $("#pause")
+      .button({
+        icons: {primary: 'ui-icon-pause' }
+      })
+      .click(pause);
+    $("#prev")
+      .button({
+        icons: {primary: 'ui-icon-seek-prev' }
+      })
+      .click(prev);
+    $("#next")
+      .button({
+        icons: {primary: 'ui-icon-seek-next' }
+      })
+      .click(next);
+
+    function play(){
+      playing = true;
+      start = Date.now();
+      step();
+    };
+    function pause(){
+      playing = false;
+      window.cancelAnimationFrame();
+    };
+    function prev(){
+      
+    };
+    function next(){
+      var showCanvas = $("#canvasarray canvas")[currentFrame];
+      var image = showCanvas.getContext("2d").getImageData( 0, 0, $(showCanvas).width(), $(showCanvas).height() );
+      $("#animate")[0].getContext("2d").putImageData(image,0,0);
+
+      currentFrame++;
+      if (currentFrame >= count) {
+        currentFrame = 0;
+      }
+    };
+
+    function addImage(image) {
+      var li = $('<li />'); 
+      li.append('<span class="ui-icon ui-icon-arrowthick-2-n-s"></span>');
+      var c = $('<canvas />')
+        .attr({
+          id: 'c'+count,
+          width: image.width,
+          height: image.height,
+          title: "image "+(count+1)+"arrow keys to scroll"
+        });
+      c[0].getContext("2d").putImageData(image,0,0);
+      li.append(c);
+      var del = $("<button>delete</button>")
+        .button({
+          icons: {primary: 'ui-icon-trash' }, 
+          text: false
+        })
+        .click(function(e){
+          if (window.confirm("Are you sure you want to delete this frame?")) {
+            $(e.target).parent().remove();
+            count--;
+          }
+        });
+      li.append(del);
+      var send = $("<button>send</button>")
+        .button({
+          icons: {primary: 'ui-icon-arrow-1-e' }, 
+          text: false
+        })
+        .click(function(e){
+          var canvas = $(e.target).parent().children("canvas");
+          var image = canvas[0].getContext("2d").getImageData(0,0,canvas.width(),canvas.height());
+          Meemoo.send("image", image);
+        });
+      li.append(send);
+
+      $("#canvasarray").append(li);
+
+      // Animation preview
+      if (image.width > $("#animate").width()) {
+        $("#animate").attr("width", image.width);
+      }
+      if (image.height > $("#animate").height()) {
+        $("#animate").attr("height", image.height);
+      }
+      $("#animate")[0].getContext("2d").putImageData(image,0,0);
+      
+      viewing = count;
+      count++;
+    }
+
+    function sendAll(){
+      $("#canvasarray li canvas").each(function(index, canvas){
+        var image = canvas.getContext("2d").getImageData( 0, 0, $(canvas).width(), $(canvas).height() );
+        Meemoo.send("image", image);
+      });
+    }
     
+    Meemoo
+      .setInfo({
+        title: "canvasarray",
+        author: "forresto",
+        description: "hold and address a stack of canvases"
+      })
+      .addInputs({
+        image: {
+          action: addImage,
+          type: "image"
+        },
+        delay: {
+          action: function(_delay){
+            delay = _delay;
+          },
+          type: "int",
+          description: "animations delay, in ms",
+          default: delay
+        },
+        reverse: {
+          action: function(){
+            $("#canvasarray").append( $("#canvasarray li").get().reverse() );
+          },
+          type: "bang",
+          description: "reverses the frames"
+        },
+        sendall: {
+          action: sendAll,
+          type: "bang",
+          description: "sends all canvases in order"
+        }
+      })
+      .addOutputs({
+        image: {
+          type: "image"
+        }
+      });
+  
+  });
   </script>
   
 </body>
