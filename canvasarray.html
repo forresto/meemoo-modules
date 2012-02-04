@@ -15,7 +15,7 @@
   
   <style type="text/css">
     html, body {
-      margin:0 0 100px 0;
+      margin: 5px 0 100px 5px;
       padding:0;
       font-family: verdana;
       font-size: 10px;
@@ -23,39 +23,43 @@
     canvas {
       padding: 0 5px;
     }
-    ul {
-      margin: 0px;
-      padding: 0px;
+    ol#canvasarray {
+      margin: 1em 0;
+      padding: 0 0 0 3em;
     }
-    li {
-      border: 1px dotted #AAA;
-      margin: 0 5px;
-      padding: 5px;
-      list-style: none;
-    }
-    li span, li button, li canvas {
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .ui-icon-arrowthick-2-n-s {
-      cursor: move;
-    }
+      ol#canvasarray li {
+        border: 1px dotted #AAA;
+        margin: 0 5px;
+        padding: 5px;
+      }
+      ol#canvasarray li button, 
+      ol#canvasarray li canvas {
+        display: inline-block;
+        vertical-align: middle;
+      }
   </style>
 </head>
 <body>
   
-  <canvas id="animate"></canvas><br />
-  <button id="play">play</button>
-  <button id="pause">pause</button>
-  <button id="prev">prev</button>
-  <button id="next">next</button>
-  <span id="info"></span>
+  <div>
+    <canvas id="animate"></canvas>
+  </div>
+  <div>
+    <button id="play">play</button>
+    <button id="pause">pause</button>
+    <button id="prev">prev</button>
+    <button id="next">next</button>
+    <span id="info"></span>
+  </div>
 
-  <ul id="canvasarray"></ul>
+  <!-- <button id="edit">edit frames</button> -->
+
+  <ol id="canvasarray" start="0"></ol>
   
   <script type="text/javascript">
   $(function(){
     
+    var frames = [];
     var count = 0;
     var delay = 200;
     var currentFrame = 0;
@@ -137,8 +141,10 @@
         currentFrame = count-1;
       }
       var showCanvas = $("#canvasarray canvas")[currentFrame];
-      var image = showCanvas.getContext("2d").getImageData( 0, 0, $(showCanvas).width(), $(showCanvas).height() );
-      $("#animate")[0].getContext("2d").putImageData(image,0,0);
+      if (showCanvas) {
+        var image = showCanvas.getContext("2d").getImageData( 0, 0, $(showCanvas).width(), $(showCanvas).height() );
+        $("#animate")[0].getContext("2d").putImageData(image,0,0);
+      }
     };
     function next(){
       currentFrame++;
@@ -146,13 +152,29 @@
         currentFrame = 0;
       }
       var showCanvas = $("#canvasarray canvas")[currentFrame];
-      var image = showCanvas.getContext("2d").getImageData( 0, 0, $(showCanvas).width(), $(showCanvas).height() );
-      $("#animate")[0].getContext("2d").putImageData(image,0,0);
+      if (showCanvas) {
+        var image = showCanvas.getContext("2d").getImageData( 0, 0, $(showCanvas).width(), $(showCanvas).height() );
+        $("#animate")[0].getContext("2d").putImageData(image,0,0);
+      }
     };
+
+    // $("#edit")
+    //   .button({
+    //     icons: {primary: 'ui-icon-video' }
+    //   })
+    //   .click(function(){
+    //     $("#canvasarray").toggle();
+    //   });
 
     function addImage(image) {
       var li = $('<li />'); 
-      li.append('<span class="ui-icon ui-icon-arrowthick-2-n-s"></span>');
+      var drag = $("<span>drag</span>")
+        .button({
+          icons: {primary: 'ui-icon-arrowthick-2-n-s' }, 
+          text: false
+        });
+      li.append(drag);
+      // li.append('<span class="ui-icon ui-icon-arrowthick-2-n-s"></span>');
       var c = $('<canvas />')
         .attr({
           id: 'c'+count,
@@ -200,11 +222,33 @@
       count++;
     }
 
-    function sendAll(){
-      $("#canvasarray li canvas").each(function(index, canvas){
+    function send(i){
+      var canvas = $("#canvasarray li canvas")[i];
+      if (canvas) {
         var image = canvas.getContext("2d").getImageData( 0, 0, $(canvas).width(), $(canvas).height() );
         Meemoo.send("image", image);
+      }
+    }
+    function sendAll(){
+      $("#canvasarray li canvas").each(function(index, canvas){
+        send(index);
       });
+    }
+
+    function del(i) {
+      var li = $("#canvasarray li")[i];
+      if (li && window.confirm("Are you sure you want to delete frame "+i+"?")) {
+        $(li).remove();
+        count--;
+        currentFrame = 0;
+      }
+    }
+    function delAll() {
+      if (window.confirm("Are you sure you want to delete all frames?")) {
+        $("#canvasarray li").remove();
+        count = 0;
+        currentFrame = 0;
+      }
     }
     
     Meemoo
@@ -233,10 +277,25 @@
           type: "bang",
           description: "reverses the frames"
         },
+        send: {
+          action: send,
+          type: "int",
+          description: "sends one canvas"
+        },
         sendall: {
           action: sendAll,
           type: "bang",
           description: "sends all canvases in order"
+        },
+        delete: {
+          action: del,
+          type: "int",
+          description: "delete one canvas"
+        },
+        deleteall: {
+          action: delAll,
+          type: "bang",
+          description: "delete all canvases"
         }
       })
       .addOutputs({
