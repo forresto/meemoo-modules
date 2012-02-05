@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>delay</title>
+  <meta name="author" content="forresto">
+  <meta name="description" content="holds some data then releases it" />
+  
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding:0;
+      font-family: verdana;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="info"></div>
+  
+  <script type="text/javascript">
+
+    var stack = [];
+    var delay = 1;
+    document.getElementById("info").innerHTML = window.encodeURI( stack.length+"/"+delay );
+
+    function hold (data) {
+      stack.push(data)
+      while (stack.length > delay) {
+        Meemoo.send("out",stack.shift());
+      }
+      if (stack.length < delay) {
+        document.getElementById("info").innerHTML = window.encodeURI( stack.length+"/"+delay );
+      }
+    }
+
+    function setDelay (_delay) {
+      delay = _delay;
+      if (stack.length > delay) {
+        stack = stack.slice(0-delay, stack.length);
+      }
+      document.getElementById("info").innerHTML = window.encodeURI( stack.length+"/"+delay );
+    }
+
+    Meemoo
+      .setInfo({
+        title: "delay",
+        author: "forresto",
+        description: "holds some data then releases it"
+      })
+      .addInputs({
+        in: {
+          action: hold,
+          type: "",
+          description: "data to delay"
+        },
+        delay: {
+          action: setDelay,
+          type: "int",
+          min: 0,
+          max: 5000,
+          description: "number of items to hold",
+          default: delay
+        }
+      })
+      .addOutputs({
+        out: {
+          type: ""
+        }
+      });
+  </script>
+  
+</body>
+</html>
