@@ -80,36 +80,43 @@
       });
     }
     
-    Meemoo.addInputs({
-      dataurl: {
-        action: function (dataurl) {
-          img.src = dataurl;
-          img.onload = function () {
-            $("#upload").removeAttr('disabled');
-          };
+    Meemoo
+      .setInfo({
+        title: "imgur",
+        author: "forresto",
+        description: "image data url to Imgur image sharing service"
+      })
+      .addInputs({
+        dataurl: {
+          action: function (dataurl) {
+            img.src = dataurl;
+            img.onload = function () {
+              $("#upload").removeAttr('disabled');
+            };
+          },
+          type: "data:image"
         },
-        type: "data:image"
-      },
-      title: {
-        action: function (_title) {
-          title = _title;
+        title: {
+          action: function (_title) {
+            title = _title;
+          },
+          type: "string"
         },
-        type: "string"
-      },
-      caption: {
-        action: function (_caption) {
-          caption = _caption;
+        caption: {
+          action: function (_caption) {
+            caption = _caption;
+          },
+          type: "string"
+        }
+      })
+      .addOutputs({
+        pageurl: {
+          type: "string"
         },
-        type: "string"
-      }
-    }).addOutputs({
-      pageurl: {
-        type: "string"
-      },
-      imageurl: {
-        type: "string"
-      }
-    });
+        imageurl: {
+          type: "string"
+        }
+      });
 
     });
   </script>
