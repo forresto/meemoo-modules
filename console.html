@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>console</title>
+  <meta name="author" content="automata.cc">
+  <meta name="description" content="a simple console" />
+
+  <!-- we have to include jquery and meemoo -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+
+  <!-- include your style too -->
+  <style type="text/css">
+    body {
+      background: #000;
+      color: #0f0;
+    }
+  </style>
+
+</head>
+<div id="console"></div>
+<body>
+  <script type="text/javascript">
+    Meemoo.setInfo({
+      title: "console",
+      author: "Vilson Vieira",
+      description: "a simple console"
+    }).addInputs({
+      display: {
+        action: function (str) {
+          $("#console").text($("#console").text() + "\n" + str);
+        },
+        type: "string"
+      },
+      clear: {
+        action: function () {
+          $("#console").text("");
+        },
+        type: "bang"
+      }
+    });
+  </script>
+</body>
+</html>

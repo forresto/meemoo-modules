@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>evaluator</title>
+  <meta name="author" content="automata.cc">
+  <meta name="description" content="type some JavaScript code on me and I'll execute it to you" />
+
+  <!-- we have to include jquery and meemoo -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+
+  <!-- include your style too -->
+  <style type="text/css">
+  </style>
+
+</head>
+<textarea id="code" rows="8" cols="20">// Type your JavaScript code here...</textarea>
+<body>
+  <script type="text/javascript">
+    Meemoo.setInfo({
+      title: "evaluator",
+      author: "Vilson Vieira",
+      description: "type some JavaScript code on me and I'll execute it to you"
+    }).addInputs({
+      code: {
+        action: function (str) {
+          $("textarea#code").val(str);
+        },
+        type: "string"
+      },
+      run: {
+        action: function () {
+          var codeAsString = $("textarea#code").val();
+          var r = eval(codeAsString);
+          Meemoo.send("result", r);
+        },
+        type: "bang"
+      }
+    }).addOutputs({
+      result: {
+        type: "string"
+      }
+    });
+  </script>
+</body>
+</html>

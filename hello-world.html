@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>hello world</title>
+  <meta name="author" content="automata.cc">
+  <meta name="description" content="the most simple meemoo module ever" />
+
+  <!-- we have to include jquery and meemoo -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+
+  <!-- include your style too -->
+  <style type="text/css">
+  </style>
+
+</head>
+<b>Hello <div id="name">World</div>!</b>
+<body>
+  <script type="text/javascript">
+    Meemoo.setInfo({
+      title: "hello world",
+      author: "Vilson Vieira",
+      description: "the most simple meemoo module ever"
+    }).addInputs({
+      name: {
+        action: function (foo) {
+          $("#name").text(foo);
+        },
+        type: "string"
+      }
+    });
+  </script>
+</body>
+</html>
