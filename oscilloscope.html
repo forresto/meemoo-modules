@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>oscilloscope</title>
+  <meta name="author" content="automata.cc">
+  <meta name="description" content="a signal oscilloscope" />
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  <script type="text/javascript" src="http://processingjs.org/js/processing.min.js"></script>
+
+</head>
+
+<script type="application/processing" data-processing-target="oscilloscope-canvas">
+// thanks oampo for this example from Audiolet!
+void setup() {
+    size(180, 180);
+    stroke(255);
+    strokeWeight(1);
+}
+
+void draw() {
+    background(0);
+
+    var signal;
+    if (window.signal) {
+        signal = window.signal;
+    }
+
+    if (!signal) return;
+    int lastY = height * 0.5;
+    for (int i = 0; i < width; i++) {
+        int currentY = height * 0.5 * (1 + signal[i]);
+        line(i - 1, lastY, i, currentY);
+        lastY = currentY;
+    }
+}
+</script> 
+<canvas id="oscilloscope-canvas"></canvas>
+<body>
+  <script type="text/javascript">
+    Meemoo.setInfo({
+      title: "oscilloscope",
+      author: "Vilson Vieira",
+      description: "a signal oscilloscope"
+    }).addInputs({
+      signal: {
+        action: function (samples) {
+          // FIXME: window.signal is a good way to store data? localStorage?
+          window.signal = samples;
+        },
+        type: "data:audio"
+      }
+    });
+  </script>
+</body>
+</html>

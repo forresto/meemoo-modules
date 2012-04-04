@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>audio oscillator</title>
+  <meta name="author" content="automata.cc">
+  <meta name="description" content="a simple audio oscillator" />
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+
+</head>
+Sine Osc <div id="frequency">440</div> Hz
+
+<body>
+  <script type="text/javascript">
+    // FIXME: continuous oscillator (play/stop)
+    // FIXME: various kinds of oscillators (phasor/square/...)
+    // FIXME: UI controls to frequency/amplitude/...
+    var frequency = 440;
+    var sampleRate = 44100;
+    var currentSample = 0;
+
+    Meemoo.setInfo({
+      title: "audio oscillator",
+      author: "Vilson Vieira",
+      description: "a simple audio oscillator"
+    }).addInputs({
+      frequency: {
+        action: function (freq) {
+          frequency = freq;
+          $("#frequency").text(freq);
+        },
+        type: "float"
+      },
+      send: {
+        action: function () {
+          // every bang it generates sampleRate audio samples
+          var k = 2 * Math.PI * frequency / sampleRate;
+          var samples = new Float32Array(sampleRate/2);
+
+          for (var i=0; i< samples.length; i++) {
+            samples[i] = Math.sin(k * i);
+          }
+
+          Meemoo.send("output", samples);
+        },
+        type: "bang"
+      }
+    }).addOutputs({
+      output: {
+        type: "data:audio"
+      }
+    });
+  </script>
+</body>
+</html>
