@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>aviary</title>
+  <meta name="author" content="aviary" />
+  <meta name="description" content="image data url to canvas image data" />
+  
+  <script type="text/javascript" src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  <script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin:0;
+      padding:0;
+      font-family: verdana;
+    }
+    #editor {
+      display: inline-block;
+      width: 714px;
+      height: 400px;
+    }
+    #conversions {
+    }
+  </style>
+</head>
+<body>
+
+  <div id="editor">Loading...</div>
+  
+  <div id="conversions">
+    <canvas id="canvasIn"></canvas>
+    <img id="imageIn" />
+    <canvas id="canvasOut"></canvas>
+  </div>
+    
+  <script type="text/javascript">
+
+    var editor = document.getElementById("editor");
+  
+    var imageIn = document.getElementById("imageIn");
+    var canvasIn = document.getElementById("canvasIn");
+    var contextIn = canvasIn.getContext("2d");
+    var canvasOut = document.getElementById("canvasOut");
+    var contextOut = canvasOut.getContext("2d");
+
+    var newImage = function (_image) {
+      canvasIn.width = _image.width;
+      canvasIn.height = _image.height;
+      contextIn.putImageData(_image, 0, 0);
+      
+      imageIn.src = canvasIn.toDataURL("image/png");
+
+      myEditor.launch({
+        image: imageIn,
+        appendTo: editor
+      });
+    }
+
+    var myEditor = new Aviary.Feather({
+      apiKey: 'f753d7094',
+      apiVersion: 2,
+      onSaveButtonClicked: function() {
+        myEditor.getImageData( function(dataurl) {
+          var img = new Image();
+          img.onload = function() {
+            var w = img.width;
+            var h = img.height;
+            canvasOut.width = w;
+            canvasOut.height = h;
+            contextOut.drawImage(img, 0, 0);
+            Meemoo.send("image", contextOut.getImageData( 0, 0, w, h ));
+          }
+          img.src = dataurl;
+          // set image to new data, and close editor
+          // if (imageOut) {
+          //   imageOut.src = data;
+          // }
+          myEditor.close();
+        });
+        return false;
+      },
+      onLoad: function() {
+        document.getElementById('editor').innerHTML = "ready";
+      }
+    });
+  
+    Meemoo
+      .setInfo({
+        title: "aviary",
+        author: "aviary",
+        description: "aviary image editor"
+      })
+      .addInputs({
+        image: {
+          action: newImage,
+          type: "image",
+          description: "image to edit"
+        },
+      })
+      .addOutputs({
+        image: {
+          type: "image"
+        }
+      });
+    
+  </script>
+  
+</body>
+</html>
