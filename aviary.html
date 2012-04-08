@@ -30,8 +30,13 @@
   
   <div id="conversions">
     <canvas id="canvasIn"></canvas>
-    <img id="imageIn" />
+    <img id="imageIn" /><br />
+    <button id="editIn" type="button">edit</button>
+    <button id="sendIn" type="button">send</button><br />
     <canvas id="canvasOut"></canvas>
+    <img id="imageOut" /><br />
+    <button id="editOut" type="button">edit</button>
+    <button id="sendOut" type="button">send</button>
   </div>
     
   <script type="text/javascript">
@@ -39,16 +44,40 @@
     var editor = document.getElementById("editor");
   
     var imageIn = document.getElementById("imageIn");
+    var imageOut = document.getElementById("imageOut");
     var canvasIn = document.getElementById("canvasIn");
     var contextIn = canvasIn.getContext("2d");
     var canvasOut = document.getElementById("canvasOut");
     var contextOut = canvasOut.getContext("2d");
 
+    var sendIn = function(){
+      Meemoo.send("image", contextIn.getImageData( 0, 0, canvasIn.width, canvasIn.height ));
+    };
+    document.getElementById("sendIn").addEventListener('click', sendIn, false);
+    var sendOut = function(){
+      Meemoo.send("image", contextOut.getImageData( 0, 0, canvasOut.width, canvasOut.height ));
+    };
+    document.getElementById("sendOut").addEventListener('click', sendOut, false);
+    var editIn = function(){
+      myEditor.launch({
+        image: imageIn,
+        appendTo: editor
+      });
+    };
+    document.getElementById("editIn").addEventListener('click', editIn, false);
+    var editOut = function(){
+      myEditor.launch({
+        image: imageOut,
+        appendTo: editor
+      });
+    };
+    document.getElementById("editOut").addEventListener('click', editOut, false);
+
     var newImage = function (_image) {
       canvasIn.width = _image.width;
       canvasIn.height = _image.height;
       contextIn.putImageData(_image, 0, 0);
-      
+
       imageIn.src = canvasIn.toDataURL("image/png");
 
       myEditor.launch({
@@ -62,7 +91,7 @@
       apiVersion: 2,
       onSaveButtonClicked: function() {
         myEditor.getImageData( function(dataurl) {
-          var img = new Image();
+          var img = imageOut;
           img.onload = function() {
             var w = img.width;
             var h = img.height;
@@ -72,10 +101,6 @@
             Meemoo.send("image", contextOut.getImageData( 0, 0, w, h ));
           }
           img.src = dataurl;
-          // set image to new data, and close editor
-          // if (imageOut) {
-          //   imageOut.src = data;
-          // }
           myEditor.close();
         });
         return false;
@@ -89,14 +114,14 @@
       .setInfo({
         title: "aviary",
         author: "aviary",
-        description: "aviary image editor"
+        description: "aviary image editor with enhance, brightness, contrast, crop, paint, stickers, text..."
       })
       .addInputs({
         image: {
           action: newImage,
           type: "image",
           description: "image to edit"
-        },
+        }
       })
       .addOutputs({
         image: {
