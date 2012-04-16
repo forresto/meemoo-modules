@@ -50,7 +50,7 @@
     
     var bpm, ms, beat;
     var loopInterval;
-    var currentBeat = true;
+    var currentBeat = false;
 
     var running = false;
     
@@ -100,6 +100,8 @@
         action: function (m) {
           running = false;
           clearInterval(loopInterval);
+          $(".light").removeClass("on");
+          currentBeat = false;
         },
         type: "bang"
       }
