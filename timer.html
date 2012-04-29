@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>timer</title>
+  <meta name="author" content="forresto">
+  <meta name="description" content="countdown to bang in ms" />
+  
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+
+  <style type="text/css">
+    html, body {
+      font-family: Verdana;
+      font-size: 35px;
+    }
+  </style>
+
+</head>
+<body>
+  
+  <div id="info"></div>
+
+  <button id="start" type="button" onclick="Meemoo.inputs.start()">start</button>
+  <button id="cancel" type="button" onclick="Meemoo.inputs.stop()">stop</button>
+  
+  <script type="text/javascript">
+
+    // shim layer with setTimeout fallback
+    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function( callback ){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+
+    var time = 3000;
+    var timer, starttime, cancel;
+
+    var info = document.getElementById('info');
+        
+    function setTime(_time){
+      _time = parseInt(_time, 10);
+      if (_time===_time){
+        time = _time;
+        info.innerHTML = time;
+      }
+    }
+    
+    function startTimer(){
+      cancel = false;
+      start = Date.now();
+      timerLoop();
+    }
+
+    function cancelTimer(){
+      cancel = true;
+    }
+
+    function timerLoop(){
+      var delta = Date.now() - start;
+      if (cancel) {
+        info.innerHTML = time;
+      } else if (delta >= time) {
+        Meemoo.send("bang", "!");
+        info.innerHTML = time;
+      } else {
+        info.innerHTML = time +":<br/>"+ (time-delta);
+        requestAnimFrame(timerLoop);
+      }
+    }
+    
+    Meemoo.setInfo({
+      title: "timer",
+      author: "forresto",
+      description: "countdown to bang"
+    }).addInputs({
+      ms: {
+        action: setTime,
+        type: "int",
+        default: time,
+        description: "timer time, in milliseconds"
+      },
+      start: {
+        action: startTimer,
+        type: "bang"
+      },
+      stop: {
+        action: cancelTimer,
+        type: "bang"
+      }
+    }).addOutputs({
+      bang: { 
+        type: "bang"
+      }
+    });
+  
+  </script>
+  
+</body>
+</html>
