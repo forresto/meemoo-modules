@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>three.js</title>
+  <meta name="author" content="automata.cc">
+  <meta name="description" content="Meemoo Three.js code loader" />
+  
+  <script src="lib/Three.js"></script>
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin:0;
+      padding:0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  
+  <button id="send" onclick="Meemoo.inputs.send();">send image</button>
+  <canvas id="threejsCanvas"></canvas>
+    
+  <script type="text/javascript">
+var c = document.getElementById("threejsCanvas");
+var cContext = c.getContext("2d");
+    
+scene = new THREE.Scene();
+
+camera = new THREE.PerspectiveCamera( 60, 
+          window.innerWidth / window.innerHeight, 1, 10000 );
+camera.position.z = 500;
+camera.target = new THREE.Vector3();
+scene.add( camera );
+
+var geometry = new THREE.CubeGeometry( 100, 100, 100 );
+var material = new THREE.MeshNormalMaterial();
+
+group = new THREE.Object3D();
+
+for ( var i = 0; i < 200; i ++ ) {
+  var mesh = new THREE.Mesh( geometry, material );
+	mesh.position.x = Math.random() * 2000 - 1000;
+	mesh.position.y = Math.random() * 2000 - 1000;
+	mesh.position.z = Math.random() * 2000 - 1000;
+	mesh.rotation.x = Math.random() * 360 * ( Math.PI / 180 );
+	mesh.rotation.y = Math.random() * 360 * ( Math.PI / 180 );
+	mesh.matrixAutoUpdate = false;
+	mesh.updateMatrix();
+	group.add( mesh );
+}
+
+scene.add( group );
+
+renderer = new THREE.CanvasRenderer({canvas: c});
+renderer.setSize( 400, 400 );
+
+function animate() {
+  requestAnimationFrame( animate );
+  render();
+}
+
+function render() {
+	group.rotation.x = Math.sin( Date.now() * 0.0002 ) * 0.5;
+	group.rotation.y = Math.sin( Date.now() * 0.0003 ) * 0.5;
+	group.rotation.z = Math.sin( Date.now() * 0.0002 ) * 0.5;
+  renderer.render( scene, camera );
+}
+
+animate();
+    
+    Meemoo.addInputs({
+      image: {
+        action: function (imageData) {
+          cContext.putImageData(imageData,0,0);          
+        },
+        type: "image"
+      },
+      send: {
+        action: function () {
+          Meemoo.send("image", cContext.getImageData(0,0,c.width,c.height));
+        },
+        type: "bang"
+      },
+      pressed: {
+        action: function () {
+          //Processing.getInstanceById("processingCanvas").mousePressed();
+        },
+        type: "bang"
+      },
+      code: {
+        action: function (code) {
+          eval(code);
+        },
+        type: "string"
+      }
+    }).addOutputs({
+      image: { 
+        type: "image"
+      }
+    });
+    
+    
+  </script>
+  
+</body>
+</html>
