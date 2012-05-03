@@ -8,7 +8,9 @@
   
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
-  
+
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4fa273582de95854"></script>
+
   <style type="text/css">
     html, body {
       margin:0;
@@ -32,6 +34,8 @@
     var name = "meemoo";
     var title = "meemoo image share ";
     var caption = "This image was created with a Meemoo composition. http://meemoo.org/ ";
+
+    var count = 0;
     
     $("#upload")
       .attr('disabled','disabled')
@@ -64,8 +68,21 @@
         var image = data['upload']['links']['original'];
         var del = data['upload']['links']['delete_page'];
         var show = 'Done! <a href="'+image+'" target="_blank"><img src="'+image+'" style="max-width:50px;max-height:50px;"></a> ';
-        show += '<a href="'+page+'" target="_blank">page</a> <a href="'+image+'" target="_blank">image</a> <a href="'+del+'" target="_blank">delete</a><br />'
+        show += '<a href="'+page+'" target="_blank">page</a> <a href="'+image+'" target="_blank">image</a> <a href="'+del+'" target="_blank">delete</a> '
+        var addThisParams = { 
+          title: title,
+          description: caption, 
+          url: page 
+        };
+        count++;
+        show += '<a class="addthis_button" id="addthis_'+count+'" href="http://www.addthis.com/bookmark.php?v=250&amp;pubid=ra-4fa273582de95854&amp;' + $.param(addThisParams) +
+          '" addthis:title="' + title + '" addthis:description="' + caption + '" addthis:url="' + page +
+          '" target="_blank"><img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a> ';
+        show += '<br />';
         $("#status").prepend(show);
+
+        // Addthis button init
+        addthis.button(document.getElementById('addthis_'+count), {}, addThisParams);
         
         // Send links
         Meemoo.send("pageurl", page);
