@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>image file</title>
+  <meta name="author" content="forresto">
+  <meta name="description" content="select or drag images to get pixeldata" />
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script type="text/javascript" src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding:0;
+      font-family: verdana;
+      font-size: 10px;
+
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  
+  <div>
+    Drag and drop image or <input id="filer" type="file" multiple />
+  </div>
+
+  <canvas id="canvas" />
+  
+  <script type="text/javascript">
+
+  $(function(){
+
+    // var c = document.createElement( 'canvas' );
+    var c = document.getElementById( 'canvas' );
+    var cx = c.getContext( '2d' );
+
+    var firstImageLoaded = false;
+
+    $("body").on("dragover", cancel);
+    $("body").on("dragenter", cancel);
+    $("body").on("drop", loadImageFile);
+
+    $("#filer").on("change", loadImageFile);
+
+    $("canvas").click(send);
+
+    function cancel(event) {
+      // Don't redirect
+      if (event.preventDefault) {
+        event.preventDefault();
+      }
+      return false;
+    }
+
+    function loadImageFile(event) {
+      cancel(event);
+
+      var files = event.target.files || event.originalEvent.dataTransfer.files;
+      var url = window.URL || window.webkitURL;
+      var objURL = url.createObjectURL || false;
+
+      if ( files.length > 0 ) {
+        var l = files.length;
+        for ( var i = 0; i < l; i++ ) {
+          var file = files[ i ];
+          if ( file.type.indexOf( 'image' ) === -1 ) { continue; }
+          if(objURL) {
+            loadImage(url.createObjectURL(file));
+          } else {
+            var reader = new FileReader();
+            reader.readAsDataURL( file );
+            reader.onload = function ( ev ) {
+              loadImage(ev.target.result);
+            };
+          }
+        }
+      }
+    }
+
+    function loadImage(file) {
+      var img = new Image();
+      img.src = file;
+      img.onload = function() {
+        firstImageLoaded = true;
+        c.width = this.width;
+        c.height = this.height;
+        cx.drawImage(this, 0, 0, this.width, this.height);
+        send();
+      };
+    }
+
+    function send() {
+      if (firstImageLoaded) {
+        var image = cx.getImageData( 0, 0, c.width, c.height );
+        Meemoo.send("image", image);
+      }
+    }
+
+    Meemoo
+      .setInfo({
+        title: "image file",
+        author: "forresto",
+        description: "select or drag images to get the canvas pixel data"
+      })
+      .addInputs({
+        // send: {
+        //   action: send,
+        //   type: "bang",
+        //   description: "(re)sends the image"
+        // }
+      })
+      .addOutputs({
+        image: {
+          type: "image"
+        }
+      });
+
+  });
+
+  </script>
+  
+</body>
+</html>
