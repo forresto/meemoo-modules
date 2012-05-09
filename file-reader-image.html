@@ -16,6 +16,10 @@
       font-family: verdana;
       font-size: 10px;
 
+      width: 98%;
+      height: 98%;
+    }
+    #page {
       width: 100%;
       height: 100%;
     }
@@ -23,29 +27,34 @@
 </head>
 <body>
   
-  <div>
-    Drag and drop image or <input id="filer" type="file" multiple />
+  <div id="page">
+    <div id="fileselect">
+      Drag and drop image or <input id="filer" type="file" multiple />
+    </div>
+    <canvas id="canvas" width="100" height="100" />
   </div>
-
-  <canvas id="canvas" />
   
   <script type="text/javascript">
 
   $(function(){
+
+    if(window.FileReader) {
+      $("body").on("dragover", cancel);
+      $("body").on("dragenter", cancel);
+      $("body").on("drop", loadImageFile);
+
+      $("#filer").on("change", loadImageFile);
+
+      $("canvas").click(send);
+    } else {
+      $("#fileselect").html('<p style="font-size:medium;">This browser does not support the FileReader API. Try Firefox or Chrome.</p>');
+    }
 
     // var c = document.createElement( 'canvas' );
     var c = document.getElementById( 'canvas' );
     var cx = c.getContext( '2d' );
 
     var firstImageLoaded = false;
-
-    $("body").on("dragover", cancel);
-    $("body").on("dragenter", cancel);
-    $("body").on("drop", loadImageFile);
-
-    $("#filer").on("change", loadImageFile);
-
-    $("canvas").click(send);
 
     function cancel(event) {
       // Don't redirect
@@ -103,7 +112,7 @@
       .setInfo({
         title: "image file",
         author: "forresto",
-        description: "select or drag images to get the canvas pixel data"
+        description: "Select or drag images to get the canvas pixel data. Requires a browser with the FileReader API, like Firefox or Chrome."
       })
       .addInputs({
         // send: {
