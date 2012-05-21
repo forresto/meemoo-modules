@@ -17,28 +17,38 @@
 </head>
 <body>
   
-  <canvas id="imageCanvas"></canvas>
+  <canvas id="imageCanvas" width="100" height="100"></canvas>
     
   <script type="text/javascript">
   
     var c = document.getElementById("imageCanvas");
     var cContext = c.getContext("2d");
+
+    var w, h;
+
+    function send(){
+      Meemoo.send("image", cContext.getImageData( 0, 0, w, h ));
+    }
   
     Meemoo.addInputs({
       dataurl: {
         action: function (dataurl) {
           var img = new Image();
           img.onload = function() {
-            var w = img.width;
-            var h = img.height;
+            w = img.width;
+            h = img.height;
             c.width = w;
             c.height = h;
             cContext.drawImage(img, 0, 0);
-            Meemoo.send("image", cContext.getImageData( 0, 0, w, h ));
+            window.setTimeout(send, 1000);
           }
           img.src = dataurl;
         },
         type: "data:image"
+      },
+      send: {
+        action: send,
+        type: "bang"
       }
     }).addOutputs({
       image: {
