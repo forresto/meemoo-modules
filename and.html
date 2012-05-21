@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset='utf-8'>
-  <title>if-bang</title>
+  <title>and</title>
   <meta name="author" content="automata">
-  <meta name="description" content="if IN = X then BANG!" />
+  <meta name="description" content="X and Y" />
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
@@ -14,11 +14,11 @@
     font-size: 14pt;
   }
 
-  #in {
+  #x {
     background: yellow;
   }
 
-  #x {
+  #y {
     color: white;
     background: blue;
   }
@@ -27,36 +27,37 @@
 
 </head>
 
-<h1>IF <span id="in">INPUT</span> == <span id="x">X</span> <br />THEN BANG!</h1>
+<h1><span id="x">X</span><br />and<br /><span id="y">Y</span></h1>
 
 <body>
   <script type="text/javascript">
-    var x;
-
+    var x = false;
+    var y = false;
     Meemoo.setInfo({
-      title: "if-bang",
+      title: "and",
       author: "automata",
-      description: "if X then BANG!"
+      description: "X and Y"
     }).addInputs({
-      input: {
-        action: function (foo) {
-          if (foo === x) {
-             Meemoo.send("bang", "bang");
-             $("body").css("background-color", "green");
-          } else {
-             $("body").css("background-color", "white");
-          }
-          $("#in").text(foo);
-        },
-        type: "int"
-      },
       x: {
-        action: function (foo) {
-           x = foo;
-           $("#x").text(foo);
+        action: function () {
+           x = true;
+           if (x && y) {
+             Meemoo.send("bang", "bang");
+           }
+           $("#x").text("BANG!");
         },
-        type: "int"
+        type: "bang"
       },
+      y: {
+        action: function () {
+           y = true;
+           if (x && y) {
+             Meemoo.send("bang", "bang");
+           }
+           $("#y").text("BANG!");
+        },
+        type: "bang"
+      }
     }).addOutputs({
       bang: {
         type: "bang"
