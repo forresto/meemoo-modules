@@ -39,22 +39,39 @@
       description: "X and Y"
     }).addInputs({
       x: {
-        action: function () {
-           x = true;
+        action: function (foo) {
+           if (foo === "bang") {
+             x = true;
+             $("#x").text("TRUE");
+           } else {
+             x = false;
+             $("#x").text("FALSE");
+           } 
            if (x && y) {
              Meemoo.send("bang", "bang");
+             $("body").css("background-color", "green");
+           } else {
+             $("body").css("background-color", "white");
            }
-           $("#x").text("BANG!");
+
         },
         type: "bang"
       },
       y: {
-        action: function () {
-           y = true;
+        action: function (foo) {
+           if (foo === "bang") {
+             y = true;
+             $("#y").text("TRUE");
+           } else {
+             y = false;
+             $("#y").text("FALSE");
+           } 
            if (x && y) {
              Meemoo.send("bang", "bang");
+             $("body").css("background-color", "green");
+           } else {
+             $("body").css("background-color", "white");
            }
-           $("#y").text("BANG!");
         },
         type: "bang"
       }
