@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>load-audio</title>
+  <meta name="author" content="automata">
+  <meta name="description" content="drag and drop audio files from your computer and play them" />
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  
+  <style type="text/css">
+    html {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      margin: 0;
+      padding: 5px 0 0 5px;
+      font-family: verdana;
+      font-size: 10px;
+    }
+    audio {
+      margin: 0 0 10px 0;
+      padding: 0;
+    }
+    h2 {
+      margin: 0;
+      padding: 0;
+      font-family: verdana;
+      font-size: 10px;
+      font-weight: 100;
+    }
+
+    #drop_zone {
+      font-size: 12pt;
+      border: 2px dashed #BBBBBB;
+      border-radius: 5px 5px 5px 5px;
+      color: #BBBBBB;
+      padding: 25px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="players"></div>
+  
+<div id="drop_zone">Drop files here...</div>
+<output id="list"></output>
+
+<script>
+    var count = 0;
+
+  function handleFileSelect(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var files = evt.dataTransfer.files;
+
+    for (var i=0; i < files.length; i++) {
+       var f = files[i];
+       var reader = new FileReader();
+       reader.onloadend = function(evt) {
+          if (evt.target.readyState == FileReader.DONE) {
+          $("#players").append(
+            $("<h2 />")
+              .text(count + ": " + f.name)
+          );
+
+             var a = $("<audio />").attr({
+               id: "audio_"+count,
+               src: evt.target.result, 
+               controls: "controls"
+             });
+             $("#players").append(a);
+             console.log(count);
+             count++;
+
+//             $('#players').append('<li><b>' + f.name + '</b><span id="newfile"><audio src="' + evt.target.result + '" controls></audio></span></li>');
+          }
+       };
+       reader.readAsDataURL(f);
+    }
+  }
+
+  function handleDragOver(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy';
+  }
+
+  var dropZone = document.getElementById('drop_zone');
+  dropZone.addEventListener('dragover', handleDragOver, false);
+  dropZone.addEventListener('drop', handleFileSelect, false);
+    
+    
+    Meemoo.setInfo({
+      title: "load-audio",
+      author: "automata",
+      description: "drag and drop audio files from your computer and play them"
+    }).addInputs({
+      audio: {
+        action: function (audio) {
+          var a = $("<audio />").attr({
+            id: "audio_"+count,
+            src: audio, 
+            controls: "controls"
+          });
+          $("#players").append(a);
+          count++;
+        },
+        type: "data:audio"
+      },
+      title: {
+        action: function (title) {
+          $("#players").append(
+            $("<h2 />")
+              .text(title)
+          );
+        },
+        type: "string"
+      },
+      send: {
+        action: function (id) {
+          var player = $( "#audio_"+id );
+          if (!player) {
+            player = $( "#audio_"+(count-1) );
+          }
+          if (player) {
+            Meemoo.send( "audio", $( "#audio_"+id ).attr("src") );
+          }
+        },
+        type: "int"
+      },
+      play: {
+        action: function (id) {
+          var player = $( "#audio_"+id );
+          player[0].play();
+        },
+        type: "int",
+        description: "play the id specified"
+      },
+      playall: {
+        action: function () {
+          $("audio").each(function(i){
+            this.play();
+          });
+        },
+        type: "bang"
+      }
+    }).addOutputs({
+      audio: {
+        type: "data:audio"
+      }
+    });
+    
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>if-bang</title>
+  <meta name="author" content="automata">
+  <meta name="description" content="if IN = X then BANG!" />
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+
+  <style type="text/css">
+  h1 {
+    font-size: 14pt;
+  }
+
+  #in {
+    background: yellow;
+  }
+
+  #x {
+    color: white;
+    background: blue;
+  }
+
+  </style>
+
+</head>
+
+<h1>IF <span id="in">INPUT</span> = <span id="x">X</span> <br />THEN BANG!</h1>
+
+<body>
+  <script type="text/javascript">
+    var x;
+
+    Meemoo.setInfo({
+      title: "if-bang",
+      author: "automata",
+      description: "if X then BANG!"
+    }).addInputs({
+      x: {
+        action: function (foo) {
+           x = foo;
+           $("#x").text(foo);
+        },
+        type: "int"
+      },
+      in: {
+        action: function (foo) {
+          if (foo === x) {
+             Meemoo.send("bang", "bang");
+             $("body").css("background-color", "green");
+          } else {
+             $("body").css("background-color", "white");
+          }
+          $("#in").text(foo);
+        },
+        type: "int"
+      },
+    }).addOutputs({
+      bang: {
+        type: "bang"
+      }
+    });
+  </script>
+</body>
+</html>
