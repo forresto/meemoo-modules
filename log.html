@@ -26,7 +26,14 @@
         all: {
           action: function (m, e) {
             count++;
-            $("#log").prepend(count + ": " + JSON.stringify(m) + "<br />");
+            var message = "";
+            if (m.width) {
+              // Image
+              message = "Image: " + m.width + "x" + m.height;
+            } else {
+              message = JSON.stringify(m);
+            }
+            $("#log").prepend(count + ": " + message + "<br />");
           },
           type: "all"
         },
