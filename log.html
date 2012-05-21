@@ -26,8 +26,9 @@
         all: {
           action: function (m, e) {
             count++;
-            $("#log").prepend(count + ": " + (e.data.constructor === String ? e.data : JSON.stringify(e.data)) + "<br />");
+            $("#log").prepend(count + ": " + JSON.stringify(m) + "<br />");
           },
+          type: "all"
         },
         clear: {
           action: function () {
