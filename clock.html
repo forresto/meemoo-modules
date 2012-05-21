@@ -32,6 +32,7 @@
 
       info.innerHTML = hours + ":" + minutes + ":" + seconds;
 
+      Meemoo.send("bang", "!");
       Meemoo.send("hours", hours);
       Meemoo.send("hoursPercent", hours%12/12);
       Meemoo.send("minutes", minutes);
@@ -48,6 +49,9 @@
       description: "time: hours minutes seconds with percentages"
     }).addInputs({
     }).addOutputs({
+      bang: { 
+        type: "bang"
+      },
       hours: { 
         type: "int"
       },
