@@ -30,15 +30,19 @@
       var minutes = d.getMinutes();
       var seconds = d.getSeconds();
 
-      info.innerHTML = hours + ":" + minutes + ":" + seconds;
+      var secondsPercent = seconds/60;
+      var minutesPercent = (minutes+secondsPercent)/60;
+      var hoursPercent = (hours%12+minutesPercent)/12;
+
+      info.innerHTML = hours + "h " + minutes + "m " + seconds + "s";
 
       Meemoo.send("bang", "!");
       Meemoo.send("hours", hours);
-      Meemoo.send("hoursPercent", hours%12/12);
+      Meemoo.send("hoursPercent", hoursPercent);
       Meemoo.send("minutes", minutes);
-      Meemoo.send("minutesPercent", minutes/60);
+      Meemoo.send("minutesPercent", minutesPercent);
       Meemoo.send("seconds", seconds);
-      Meemoo.send("secondsPercent", seconds/60);
+      Meemoo.send("secondsPercent", secondsPercent);
     }
 
     window.setInterval(sendTime, 1000);
