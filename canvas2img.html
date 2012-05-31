@@ -61,8 +61,8 @@
           default: compress
         },
         quality: {
-          action: function (int) {
-            quality = int;
+          action: function (float) {
+            quality = parseFloat(float);
           },
           min: 0,
           max: 1,
