@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>canvas2img</title>
+  <meta name="author" content="forresto" />
+  <meta name="description" content="canvas image data to image data url" />
+  
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin:0;
+      padding:0;
+    }
+  </style>
+</head>
+<body>
+  
+  <img id="img" style="max-width:100%" />
+    
+  <script type="text/javascript">
+  
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
+
+    var img = document.getElementById("img");
+
+    var compress = false;
+    var quality = 0.8;
+  
+    Meemoo
+      .setInfo({
+        title: "canvas2img",
+        author: "forresto",
+        description: "canvas image data to image data url"
+      })
+      .addInputs({
+        image: {
+          action: function (image) {
+            if (canvas.width !== image.width || canvas.height !== image.height) {
+              canvas.width = image.width;
+              canvas.height = image.height;
+            }
+            context.putImageData(image, 0, 0);
+            if (compress) {
+              img.src = canvas.toDataURL("image/jpeg", quality);
+            } else {
+              img.src = canvas.toDataURL("image/png");
+            }
+            Meemoo.send("dataurl", img.src);
+          },
+          type: "image"
+        },
+        compress: {
+          action: function (boo) {
+            compress = boo;
+          },
+          type: "boolean",
+          description: "if false will be lossless png, otherwise compress with jpg quality",
+          default: compress
+        },
+        quality: {
+          action: function (int) {
+            quality = int;
+          },
+          min: 0,
+          max: 1,
+          type: "float",
+          description: "jpg quality from 0.0 to 1.0 (only if compress is true)",
+          default: quality
+        },
+        send: {
+          action: function () {
+            Meemoo.send("dataurl", img.src);
+          },
+          type: "bang"
+        }
+      })
+      .addOutputs({
+        dataurl: {
+          type: "data:image"
+        }
+      });
+    
+  </script>
+  
+</body>
+</html>
