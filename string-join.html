@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>string-join</title>
+  <meta name="author" content="forresto">
+  <meta name="description" content="join text strings into one string" />
+  
+  <script type="text/javascript" src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding:0;
+      font-family: verdana;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="joined">...</div>
+  
+  <script type="text/javascript">
+
+    
+    var joined = document.getElementById("joined");
+
+    var strings = [];
+    var stringJoin = " ";
+    var string = "";
+
+    function setStringJoin(str){
+      stringJoin = str;
+    }
+    function string1(str){
+      addString(str, 0);
+    }
+    function string2(str){
+      addString(str, 1);
+    }
+    function string3(str){
+      addString(str, 2);
+    }
+    function string4(str){
+      addString(str, 3);
+    }
+    function string5(str){
+      addString(str, 4);
+    }
+    function addString(str, strnumber) {
+      strings[strnumber] = str;
+      combine();
+    }
+    var combineWait = 1000/30;
+    var combineTimeout;
+    function combine(){
+      // Minimum time to do combine again, so that changing a few variables at the same time doesn't do multiple draws
+      if (combineTimeout) {
+        clearTimeout(combineTimeout);
+      }
+      combineTimeout = setTimeout(combineDo, combineWait);
+    }
+    function combineDo(){
+      string = strings.join(stringJoin);
+
+      // Escape HTML
+      joined.innerHTML = string
+        .replace(/&/g, '&amp;')
+        .replace(/>/g, '&gt;')
+        .replace(/</g, '&lt;')
+        .replace(/"/g, '&quot;');
+
+      send();
+    }
+
+    function clear(){
+      string = "";
+      strings = [];
+      joined.innerHTML = "";
+    }
+
+    function send(){
+      Meemoo.send("string", string );
+    }
+
+    Meemoo
+      .setInfo({
+        title: "string-join",
+        author: "forresto",
+        description: "join text strings into one string"
+      })
+      .addInputs({
+        string1: {
+          action: string1,
+          type: "string",
+          description: "first text string"
+        },
+        string2: {
+          action: string2,
+          type: "string",
+          description: "text string"
+        },
+        string3: {
+          action: string3,
+          type: "string",
+          description: "text string"
+        },
+        string4: {
+          action: string4,
+          type: "string",
+          description: "text string"
+        },
+        string5: {
+          action: string5,
+          type: "string",
+          description: "text string"
+        },
+        join: {
+          action: setStringJoin,
+          type: "string",
+          description: "this text will be put between each of the strings",
+          default: stringJoin
+        },
+        clear: {
+          action: clear,
+          type: "bang",
+          description: "clear the canvas"
+        },
+        send: {
+          action: send,
+          type: "bang",
+          description: "send the combined canvas"
+        }
+      })
+      .addOutputs({
+        string: {
+          type: "string"
+        }
+      });
+  </script>
+  
+</body>
+</html>

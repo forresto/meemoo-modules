@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>color-rgba</title>
+  <meta name="author" content="forresto">
+  <meta name="description" content="make rgba() css color (red, green, blue, alpha)" />
+  
+  <script type="text/javascript" src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding:0;
+      font-family: verdana;
+      font-size: 10px;
+    }
+    #samplebg {
+      background-image: url('alphabg.png');
+    }
+    #samplebg,
+    #sample {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="samplebg"><div id="sample"></div></div>
+  <div id="color">...</div>
+  
+  <script type="text/javascript">
+
+    var colorDiv = document.getElementById("color");
+    var sample = document.getElementById("sample");
+
+    var red = 1;
+    var green = 0;
+    var blue = 0;
+    var alpha = 1;
+    var color = "";
+
+    function setRed(f){
+      red = parseFloat(f);
+      combine();
+    }
+    function setGreen(f){
+      green = parseFloat(f);
+      combine();
+    }
+    function setBlue(f){
+      blue = parseFloat(f);
+      combine();
+    }
+    function setAlpha(f){
+      alpha = parseFloat(f);
+      combine();
+    }
+    var combineWait = 1000/30;
+    var combineTimeout;
+    function combine(){
+      // Minimum time to do combine again, so that changing a few variables at the same time doesn't do multiple draws
+      if (combineTimeout) {
+        clearTimeout(combineTimeout);
+      }
+      combineTimeout = setTimeout(combineDo, combineWait);
+    }
+    function combineDo(){
+      color = "rgba("+(red*100)+"%, "+(green*100)+"%, "+(blue*100)+"%, "+alpha+")";
+      colorDiv.innerHTML = color;
+      sample.style.backgroundColor = color;
+      send();
+    }
+
+    function send(){
+      Meemoo.send("color", color );
+    }
+
+    Meemoo
+      .setInfo({
+        title: "color-rgba",
+        author: "forresto",
+        description: "make rgba() css color"
+      })
+      .addInputs({
+        red: {
+          action: setRed,
+          type: "float",
+          description: "red value, 0-1",
+          min: 0,
+          max: 1,
+          default: red
+        },
+        green: {
+          action: setGreen,
+          type: "float",
+          description: "green value, 0-1",
+          min: 0,
+          max: 1,
+          default: green
+        },
+        blue: {
+          action: setBlue,
+          type: "float",
+          description: "blue value, 0-1",
+          min: 0,
+          max: 1,
+          default: blue
+        },
+        alpha: {
+          action: setAlpha,
+          type: "float",
+          description: "alpha value, 0-1",
+          min: 0,
+          max: 1,
+          default: alpha
+        }
+      })
+      .addOutputs({
+        color: {
+          type: "string"
+        }
+      });
+  </script>
+  
+</body>
+</html>
