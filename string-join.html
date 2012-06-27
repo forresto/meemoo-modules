@@ -52,26 +52,29 @@
       strings[strnumber] = str;
       combine();
     }
-    var combineWait = 1000/30;
-    var combineTimeout;
+    // var combineWait = 1000/30;
+    // var combineTimeout;
+    // function combine(){
+    //   console.log(string, new Date().getTime());
+    //   // Minimum time to do combine again, so that changing a few variables at the same time doesn't do multiple draws
+    //   if (combineTimeout) {
+    //     clearTimeout(combineTimeout);
+    //   }
+    //   combineTimeout = setTimeout(combineDo, combineWait);
+    // }
     function combine(){
-      // Minimum time to do combine again, so that changing a few variables at the same time doesn't do multiple draws
-      if (combineTimeout) {
-        clearTimeout(combineTimeout);
+      var newString = strings.join(stringJoin);
+
+      if (string !== newString) {
+        string = newString;
+
+        // Escape HTML
+        var textNode = document.createTextNode(string);
+        joined.innerHTML = "";
+        joined.appendChild(textNode);
+
+        send();
       }
-      combineTimeout = setTimeout(combineDo, combineWait);
-    }
-    function combineDo(){
-      string = strings.join(stringJoin);
-
-      // Escape HTML
-      joined.innerHTML = string
-        .replace(/&/g, '&amp;')
-        .replace(/>/g, '&gt;')
-        .replace(/</g, '&lt;')
-        .replace(/"/g, '&quot;');
-
-      send();
     }
 
     function clear(){
