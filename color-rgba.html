@@ -58,16 +58,16 @@
       alpha = parseFloat(f);
       combine();
     }
-    var combineWait = 1000/30;
-    var combineTimeout;
+    // var combineWait = 1000/30;
+    // var combineTimeout;
+    // function combine(){
+    //   // Minimum time to do combine again, so that changing a few variables at the same time doesn't do multiple draws
+    //   if (combineTimeout) {
+    //     clearTimeout(combineTimeout);
+    //   }
+    //   combineTimeout = setTimeout(combineDo, combineWait);
+    // }
     function combine(){
-      // Minimum time to do combine again, so that changing a few variables at the same time doesn't do multiple draws
-      if (combineTimeout) {
-        clearTimeout(combineTimeout);
-      }
-      combineTimeout = setTimeout(combineDo, combineWait);
-    }
-    function combineDo(){
       color = "rgba("+(red*100)+"%, "+(green*100)+"%, "+(blue*100)+"%, "+alpha+")";
       colorDiv.innerHTML = color;
       sample.style.backgroundColor = color;
