@@ -43,8 +43,15 @@
     var color = "";
 
     function setHue(f){
-      hue = parseFloat(f);
-      combine();
+      f = parseFloat(f);
+      if (f===f) {
+        if (f<0.00000001) {
+          // js color doesn't like 1e-9 hue
+          f = 0;
+        }
+        hue = f;
+        combine();
+      }
     }
     function setSaturation(f){
       saturation = parseFloat(f);
@@ -68,10 +75,13 @@
     //   combineTimeout = setTimeout(combineDo, combineWait);
     // }
     function combine(){
-      color = "hsla("+(hue*360)+", "+(saturation*100)+"%, "+(lightness*100)+"%, "+alpha+")";
-      colorDiv.innerHTML = color;
-      sample.style.backgroundColor = color;
-      send();
+      var newColor = "hsla("+(hue*360)+", "+(saturation*100)+"%, "+(lightness*100)+"%, "+alpha+")";
+      if (newColor !== color) {
+        color = newColor;
+        colorDiv.innerHTML = color;
+        sample.style.backgroundColor = color;
+        send();
+      }
     }
 
     function send(){
