@@ -67,6 +67,7 @@
     var currentFrame = 0;
     var start = Date.now();
     var playing = false;
+    var firstframe = true;
     
     $(document).mouseover(function(e){
       $("body").focus();
@@ -250,6 +251,11 @@
       context.putImageData(image,0,0);
       
       count++;
+
+      if (firstframe) {
+        firstframe = false;
+        play();
+      }
     }
 
     
