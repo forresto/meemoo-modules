@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>sliders</title>
+  <meta name="author" content="automata.cc">
+  <meta name="description" content="some dat.gui sliders" />
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://meemoo.org/meemoo/v1/meemoo-min.js"></script>
+  <script type="text/javascript" src="/lib/dat-gui/build/dat.gui.min.js"></script>
+
+</head>
+
+<body>
+  <div id="container"></div>
+  <script type="text/javascript">
+
+    var FizzyText = function() {
+      // numbers
+      this.number0 = 0.5;
+      this.number1 = 0.5;
+      this.number2 = 0.5;
+      // colors
+      this.color0 = "#ff0000";
+      this.color1 = "#00ff00";
+      this.color2 = "#0000ff";
+    };
+
+    var text = new FizzyText();
+    var gui = new dat.GUI({autoPlace: false});
+    $("#container").append(gui.domElement);
+
+    var ctrlNumber0 = gui.add(text, 'number0', 0, 1).step(0.1);
+    var ctrlNumber1 = gui.add(text, 'number1', 0, 1).step(0.1);
+    var ctrlNumber2 = gui.add(text, 'number2', 0, 1).step(0.1);
+    var ctrlColor0 = gui.addColor(text, 'color0');
+    var ctrlColor1 = gui.addColor(text, 'color1');
+    var ctrlColor2 = gui.addColor(text, 'color2');
+
+    ctrlNumber0.onChange(function (v) {
+      Meemoo.send("number0", v);
+    });
+
+    ctrlNumber1.onChange(function (v) {
+      Meemoo.send("number1", v);
+    });
+
+    ctrlNumber2.onChange(function (v) {
+      Meemoo.send("number2", v);
+    });
+
+    ctrlColor0.onChange(function (v) {
+      Meemoo.send("color0", v);
+    });
+
+    ctrlColor1.onChange(function (v) {
+      Meemoo.send("color1", v);
+    });
+
+    ctrlColor2.onChange(function (v) {
+      Meemoo.send("color2", v);
+    });
+
+
+
+    Meemoo.setInfo({
+      title: "sliders",
+      author: "automata.cc",
+      description: "some dat.gui sliders"
+    }).addOutputs({
+      number0: {
+        type: "number"
+      },
+      number1: {
+        type: "number"
+      },
+      number2: {
+        type: "number"
+      },
+      color0: {
+        type: "string"
+      },
+      color1: {
+        type: "string"
+      },
+      color2: {
+        type: "string"
+      }
+    });
+  </script>
+</body>
+</html>
