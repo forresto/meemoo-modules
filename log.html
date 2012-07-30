@@ -34,6 +34,9 @@
               message = JSON.stringify(m);
             }
             $("#log").prepend(count + ": " + message + "<br />");
+            if (!!console.log) {
+              console.log(m);
+            }
           },
           type: "all"
         },
